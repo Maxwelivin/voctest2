@@ -2366,6 +2366,9 @@ if (direction === 'flashcard') {
 
       const handleSubmit = (e) => {
         e.preventDefault();
+        // 強制維持焦點，防止手機鍵盤在切換狀態時自動收合
+        if (inputRef.current) inputRef.current.focus();
+
         if (isTerminalState) { handleNextAction(); return; }
         if (direction === 'mcq-zh-en' || direction === 'mcq-en-zh') return;
         if (!userInput.trim() || !currentWord) return;
@@ -2630,7 +2633,7 @@ if (direction === 'flashcard') {
                   Tab 2: Training (特訓主戰場)
               ========================================= */}
               <div className={`md:col-span-2 bg-white rounded-xl border-4 border-slate-900 shadow-[8px_8px_0_0_#2563eb] flex-col overflow-hidden relative ${mobileTab === 'training' ? 'flex' : 'hidden md:flex'}`}>
-                <div className="bg-slate-100 border-b-4 border-slate-900 px-6 py-4 flex flex-col sm:flex-row justify-between items-center gap-4 shrink-0 z-10">
+                <div className="bg-slate-100 border-b-4 border-slate-900 px-3 sm:px-6 py-3 flex flex-row justify-between items-center gap-2 sm:gap-4 shrink-0 z-10">
                   
                   {/* 第一個下拉選單：訓練模式切換 */}
                   <select 
@@ -2638,24 +2641,22 @@ if (direction === 'flashcard') {
                     onChange={(e) => {
                       const newMode = e.target.value;
                       setMode(newMode);
-                      // 如果切換回掃描或自由訓練，確保重置狀態讓使用者看到開始畫面
                       if (newMode === 'scan' || newMode === 'all') {
                         setIsSessionActive(false);
                       }
                       e.target.blur();
                     }}
                     disabled={mode === 'battle'}
-                    className="bg-white border-4 border-slate-900 text-slate-900 text-sm font-black rounded-lg focus:ring-0 block p-3 outline-none cursor-pointer hover:-translate-y-1 transition-transform shadow-[4px_4px_0_0_#1e293b] w-full sm:w-auto disabled:opacity-50 disabled:hover:translate-y-0"
+                    className="bg-white border-4 border-slate-900 text-slate-900 text-[11px] sm:text-sm font-black rounded-lg focus:ring-0 block p-2 sm:p-3 outline-none cursor-pointer hover:-translate-y-1 transition-transform shadow-[3px_3px_0_0_#1e293b] sm:shadow-[4px_4px_0_0_#1e293b] flex-1 w-full min-w-0 disabled:opacity-50 disabled:hover:translate-y-0 text-center [text-align-last:center]"
                   >
-                    <option value="scan">📡 快速掃描</option>
-                    <option value="all">🎯 自由訓練</option>
-                    {/* 直接在選項中顯示數量，並保留防呆機制（0題不可選） */}
-                    <option value="errors" disabled={errorList.length === 0}>⚠️ 錯題特訓 ({errorList.length})</option>
-                    <option value="starred" disabled={starredWords.length === 0}>⭐ 星號特訓 ({starredWords.length})</option>
-                    <option value="list">📖 總覽列表</option>
+                    <option value="scan"> 快速掃描</option>
+                    <option value="all"> 自由訓練</option>
+                    <option value="errors" disabled={errorList.length === 0}> 錯題特訓 ({errorList.length})</option>
+                    <option value="starred" disabled={starredWords.length === 0}> 星號強化 ({starredWords.length})</option>
+                    <option value="list"> 總覽列表</option>
                   </select>
                   
-                  {/* 第二個下拉選單：題型方向 (維持原樣不變) */}
+                  {/* 第二個下拉選單：題型方向 */}
                   {mode !== 'list' && mode !== 'scan' && (
                     <select 
                       value={direction} 
@@ -2665,7 +2666,7 @@ if (direction === 'flashcard') {
                          e.target.blur(); 
                       }} 
                       disabled={mode === 'battle'}
-                      className="bg-white border-4 border-slate-900 text-slate-900 text-sm font-black rounded-lg focus:ring-0 block p-3 outline-none cursor-pointer hover:-translate-y-1 transition-transform shadow-[4px_4px_0_0_#1e293b] w-full sm:w-auto disabled:opacity-50 disabled:hover:translate-y-0"
+                      className="bg-white border-4 border-slate-900 text-slate-900 text-[11px] sm:text-sm font-black rounded-lg focus:ring-0 block p-2 sm:p-3 outline-none cursor-pointer hover:-translate-y-1 transition-transform shadow-[3px_3px_0_0_#1e293b] sm:shadow-[4px_4px_0_0_#1e293b] flex-1 w-full min-w-0 disabled:opacity-50 disabled:hover:translate-y-0 text-center [text-align-last:center]"
                     >
                       <optgroup label="閃卡模式">
                         <option value="flashcard">閃卡翻轉 (自我檢測)</option>
@@ -2797,7 +2798,7 @@ if (direction === 'flashcard') {
                                 {currentWord.ex && (
                                   !showExample ? (
                                     <button onClick={(e) => { e.stopPropagation(); setShowExample(true); }} className="w-full py-2 bg-indigo-50 hover:bg-indigo-100 border-2 border-dashed border-indigo-300 text-indigo-700 font-black rounded-lg transition-colors text-sm flex items-center justify-center gap-2 mt-2">
-                                      👁️ 顯示例句
+                                       顯示例句
                                     </button>
                                   ) : (
                                     <div className="p-4 bg-indigo-50 border-2 border-dashed border-indigo-300 rounded-lg w-full text-left overflow-y-auto custom-scrollbar max-h-32 animate-fade-in">
@@ -2868,7 +2869,7 @@ if (direction === 'flashcard') {
                                      <div className="mt-4">
                                        {!showExample ? (
                                          <button type="button" onClick={() => setShowExample(true)} className="w-full max-w-sm mx-auto py-2 bg-indigo-50 hover:bg-indigo-100 border-2 border-dashed border-slate-400 text-indigo-700 font-black rounded-xl transition-colors text-sm flex items-center justify-center gap-2 shadow-[2px_2px_0_0_#1e293b]">
-                                           👁️ 顯示例句
+                                            顯示例句
                                          </button>
                                        ) : (
                                          <div className="p-5 bg-indigo-50 rounded-xl border-4 border-slate-900 shadow-[4px_4px_0_0_#1e293b] text-left max-w-sm mx-auto transform rotate-1 flex flex-col gap-3 animate-fade-in">
@@ -2900,7 +2901,7 @@ if (direction === 'flashcard') {
                                     <div className="mt-6">
                                       {!showExample ? (
                                         <button type="button" onClick={() => setShowExample(true)} className="w-full max-w-sm mx-auto py-2 bg-indigo-50 hover:bg-indigo-100 border-2 border-dashed border-slate-400 text-indigo-700 font-black rounded-xl transition-colors text-sm flex items-center justify-center gap-2 shadow-[2px_2px_0_0_#1e293b]">
-                                          👁️ 顯示例句
+                                           顯示例句
                                         </button>
                                       ) : (
                                         <div className="p-5 bg-indigo-50 rounded-xl border-4 border-slate-900 shadow-[4px_4px_0_0_#1e293b] text-left max-w-sm mx-auto transform -rotate-1 flex flex-col gap-3 animate-fade-in">
@@ -2990,7 +2991,7 @@ if (direction === 'flashcard') {
   </div>
 )}
                             {isTerminalState ? (
-                               <button type="button" autoFocus onClick={handleNextAction} className="w-full bg-blue-600 hover:bg-blue-500 text-white border-4 border-slate-900 py-4 rounded-xl font-black shadow-[6px_6px_0_0_#1e293b] text-xl mt-4 transition-transform transform hover:-translate-y-1 active:translate-y-0 active:shadow-none focus:outline-none uppercase tracking-widest flex justify-center items-center gap-3">
+                               <button type="button" onClick={handleNextAction} className="w-full bg-blue-600 hover:bg-blue-500 text-white border-4 border-slate-900 py-4 rounded-xl font-black shadow-[6px_6px_0_0_#1e293b] text-xl mt-4 transition-transform transform hover:-translate-y-1 active:translate-y-0 active:shadow-none focus:outline-none uppercase tracking-widest flex justify-center items-center gap-3">
                                   NEXT 
                                </button>
                             ) : (
