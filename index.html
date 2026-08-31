@@ -2158,7 +2158,7 @@ useEffect(() => { localStorage.setItem(`vocab_star_${selectedBook}`, JSON.string
       setErrorList(prev => prev.map(w => w.en === currentWord.en ? { ...w, streak: currentStreak } : w));
     }
   } else {
-    setFeedback({ status: 'correct', msg: '答對了！' });
+    setFeedback({ status: 'correct', msg: '' });
   }
   
   if (direction === 'mcq-zh-en' || (modeRef.current === 'battle' && battleStepRef.current === 2)) playAudio(currentWord.en); 
@@ -2449,7 +2449,7 @@ if (direction === 'flashcard') {
       setErrorList(prev => prev.map(w => w.en === currentWord.en ? { ...w, streak: currentStreak } : w));
     }
   } else {
-    setFeedback({ status: 'correct', msg: '答對了！' });
+    setFeedback({ status: 'correct', msg: '' });
   }
   // 【移除這裡的 setTimeout，讓畫面停留在成功狀態，等待使用者按 NEXT 或 Enter】
 } else {
@@ -2948,13 +2948,14 @@ if (direction === 'flashcard') {
                                 UNCLEAR (不熟)
                               </button>
                             )}
-                            {feedback && (
-  <div className="flex items-center justify-center text-center mt-4 animate-fade-in">
-    <div className={`text-lg font-black px-6 py-2 rounded-xl border-4 border-slate-900 shadow-[4px_4px_0_0_#1e293b] w-full transform -rotate-1 ${feedback.status === 'correct' ? 'bg-green-400 text-slate-900' : feedback.status === 'unfamiliar' ? 'bg-yellow-400 text-slate-900' : 'bg-red-500 text-white'}`}>
-      {feedback.msg}
-    </div>
-  </div>
-)}
+                            {/* 只有當 feedback 存在且有訊息內容時才顯示這塊方塊 */}
+                            {feedback && feedback.msg && (
+                              <div className="flex items-center justify-center text-center mt-4 animate-fade-in">
+                                <div className={`text-lg font-black px-6 py-2 rounded-xl border-4 border-slate-900 shadow-[4px_4px_0_0_#1e293b] w-full transform -rotate-1 ${feedback.status === 'correct' ? 'bg-green-400 text-slate-900' : feedback.status === 'unfamiliar' ? 'bg-yellow-400 text-slate-900' : 'bg-red-500 text-white'}`}>
+                                  {feedback.msg}
+                                </div>
+                              </div>
+                            )}
                             {isTerminalState && (
                               <button autoFocus onClick={handleNextAction} className="w-full bg-blue-600 hover:bg-blue-500 text-white border-4 border-slate-900 py-4 rounded-xl font-black shadow-[4px_4px_0_0_#1e293b] text-xl mt-1 transition-transform transform hover:-translate-y-1 active:translate-y-0 active:shadow-none focus:outline-none uppercase tracking-widest flex items-center justify-center gap-2">
                                 NEXT 
@@ -2983,27 +2984,27 @@ if (direction === 'flashcard') {
                                 </button>
                               )}
                             </div>
-                            {feedback && (
-  <div className="mt-5 flex items-center justify-center text-center animate-fade-in">
-    <div className={`text-lg font-black px-6 py-2 rounded-xl border-4 border-slate-900 shadow-[4px_4px_0_0_#1e293b] w-full transform ${feedback.status === 'correct' ? 'bg-green-400 text-slate-900 rotate-1' : feedback.status === 'unfamiliar' || feedback.status === 'hint' ? 'bg-yellow-400 text-slate-900 -rotate-1' : 'bg-red-500 text-white -rotate-1'}`}>
-      {feedback.msg}
-    </div>
-  </div>
-)}
+                            {/* 只有當 feedback 存在且有訊息內容時才顯示這塊方塊 */}
+                            {feedback && feedback.msg && (
+                              <div className="mt-5 flex items-center justify-center text-center animate-fade-in">
+                                <div className={`text-lg font-black px-6 py-2 rounded-xl border-4 border-slate-900 shadow-[4px_4px_0_0_#1e293b] w-full transform ${feedback.status === 'correct' ? 'bg-green-400 text-slate-900 rotate-1' : feedback.status === 'unfamiliar' || feedback.status === 'hint' ? 'bg-yellow-400 text-slate-900 -rotate-1' : 'bg-red-500 text-white -rotate-1'}`}>
+                                  {feedback.msg}
+                                </div>
+                              </div>
+                            )}
+                            
                             {isTerminalState ? (
-                               <button type="button" onClick={handleNextAction} className="w-full bg-blue-600 hover:bg-blue-500 text-white border-4 border-slate-900 py-4 rounded-xl font-black shadow-[6px_6px_0_0_#1e293b] text-xl mt-4 transition-transform transform hover:-translate-y-1 active:translate-y-0 active:shadow-none focus:outline-none uppercase tracking-widest flex justify-center items-center gap-3">
+                               <button type="button" onClick={handleNextAction} className="w-full bg-blue-600 hover:bg-blue-500 text-white border-4 border-slate-900 py-4 rounded-xl font-black shadow-[4px_4px_0_0_#1e293b] text-xl mt-4 transition-transform transform hover:-translate-y-1 active:translate-y-0 active:shadow-none focus:outline-none uppercase tracking-widest flex justify-center items-center gap-3">
                                   NEXT 
                                </button>
                             ) : (
-                               <div className="flex flex-col gap-4 mt-4">
-                                  <button type="submit" className="w-full bg-red-600 hover:bg-red-500 text-white border-4 border-slate-900 py-4 rounded-xl font-black shadow-[6px_6px_0_0_#1e293b] text-xl transition-transform transform hover:-translate-y-1 active:translate-y-0 active:shadow-none uppercase tracking-wider flex justify-center items-center gap-3">
-                                     SUBMIT (提交) 
+                               <div className="flex flex-row gap-3 mt-4">
+                                  <button type="button" onClick={handleUnfamiliar} className="flex-[0.8] bg-yellow-400 hover:bg-yellow-300 text-slate-900 border-4 border-slate-900 py-3.5 rounded-xl font-black transition-transform hover:-translate-y-1 shadow-[4px_4px_0_0_#1e293b] text-sm sm:text-base uppercase flex justify-center items-center gap-2">
+                                     UNCLEAR 
                                   </button>
-                                  <div className="flex gap-4">
-                                     <button type="button" onClick={handleUnfamiliar} className="w-full bg-yellow-400 hover:bg-yellow-300 text-slate-900 border-4 border-slate-900 py-3.5 rounded-xl font-black transition-transform hover:-translate-y-1 shadow-[4px_4px_0_0_#1e293b] text-base uppercase flex justify-center items-center gap-2">
-                                        UNCLEAR 
-                                     </button>
-                                  </div>
+                                  <button type="submit" className="flex-[1.2] bg-red-600 hover:bg-red-500 text-white border-4 border-slate-900 py-3.5 rounded-xl font-black shadow-[4px_4px_0_0_#1e293b] text-base sm:text-xl transition-transform transform hover:-translate-y-1 active:translate-y-0 active:shadow-none uppercase tracking-wider flex justify-center items-center gap-2">
+                                     SUBMIT  
+                                  </button>
                                </div>
                             )}
                           </form>
